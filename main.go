@@ -3,12 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"io"
 	"log"
 	"os"
-
-	"github.com/stripe/aws-go/aws"
-	"github.com/stripe/aws-go/gen/s3"
 )
 
 func main() {
@@ -25,10 +24,9 @@ func main() {
 	}
 	bucket, key := flag.Arg(0), flag.Arg(1)
 
-	creds := aws.IAMCreds()
+	s := s3.New(&aws.Config{Region: "eu-west-1"})
 
-	s := s3.New(creds, "eu-west-1", nil)
-	resp, err := s.GetObject(&s3.GetObjectRequest{
+	resp, err := s.GetObject(&s3.GetObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 	})
