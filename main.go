@@ -12,20 +12,20 @@ import (
 
 func main() {
 	var (
-		output string
+		output, region string
 	)
 	flag.StringVar(&output, "output", "/dev/stdout", "Place to send the output")
+	flag.StringVar(&region, "region", os.Getenv("AWS_DEFAULT_REGION"), "Region where the bucket is located")
 	flag.Parse()
 
 	if flag.NArg() != 2 {
-		fmt.Fprintf(os.Stderr, "Usage: %s [-output=FILEPATH] <bucket> <key>\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "Usage: %s [-output=FILEPATH] [-region=REGION] <bucket> <key>\n", os.Args[0])
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
 	bucket, key := flag.Arg(0), flag.Arg(1)
 
-	s := s3.New(&aws.Config{Region: "eu-west-1"})
-
+	s := s3.New(&aws.Config{Region: region})
 	resp, err := s.GetObject(&s3.GetObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
